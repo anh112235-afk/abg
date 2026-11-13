@@ -1,0 +1,268 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct {
+	char HoTen[30];
+	int masv;
+	float d1 , d2 ,d3;
+}Data;
+
+typedef struct tagNode {
+	Data infor;
+	struct tagNode *link;
+}Node;
+
+typedef struct {
+	Node *pHead;
+	Node *pTail;
+	int spt;
+}LList;
+void taoList(LList *L){
+	L->pHead = NULL;
+	L->pTail = NULL;
+	L->spt = 0;
+}
+
+int emptyList(LList L){
+	return (L.spt == 0);
+}
+//1
+void themDau (LList *L , Data x){
+	Node *pp;
+	pp = (Node*)malloc(sizeof(Node));
+	pp->infor = x;
+	pp->link = NULL;
+	
+	if  ( emptyList(*L)){
+		L->pHead = pp;
+		L->pTail = pp;
+	}
+	else {
+		pp->link = L->pHead;
+		L->pHead = pp;
+	}
+	L->spt++;
+}
+//2
+void themCuoi (LList *L , Data x){
+	Node *pp;
+	pp = (Node*)malloc(sizeof(Node));
+	pp->infor = x;
+	pp->link =NULL;
+	if(emptyList(*L)){
+		L->pHead= pp;
+		L->pTail = pp;
+	}
+	else{
+		L->pTail->link = pp;
+		L->pTail = pp;
+	}
+	L->spt++;
+}
+//3
+Node* ViTri(LList L , int k){
+	if ( k < 1 || k > L.spt ) return NULL;
+	Node *pp = L.pHead;
+	int dem = 1;
+	while (pp != NULL && dem < k){
+		pp = pp->link;
+		dem++;
+	}
+	return pp;
+}
+void themSau(LList *L ,Node *q, Data x){
+	Node *pp;
+	if (q == NULL) return;
+	else {
+		pp = (Node*)malloc(sizeof(Node));
+		pp->infor = x;
+		pp->link = q->link;
+		q->link = pp;
+		if(q == L->pTail) L->pTail == pp;
+		L->spt++;
+	}
+}
+
+//4
+
+void chen_tang(LList *L , Data x){
+	Node *pp = L->pHead, *q;
+	while (pp != NULL && pp->infor.masv < x.masv){
+		q =pp;
+		pp = pp->link;
+	}
+	if(pp == L->pHead) themDau(L,x);
+	else themSau(L,q,x);
+}
+
+//5
+void tach(LList L , LList *L1 , LList *L2){
+	taoList(L1);
+	taoList(L2);
+	Node *pp = L.pHead;
+	while (pp != NULL){
+		if(pp->infor.d1 < 7.0 || pp->infor.d2 < 7.0|| pp->infor.d3 < 7.0){
+			themDau(L1, pp->infor);
+		}else themDau(L2,pp->infor);
+		pp = pp->link;
+	}
+}
+//6
+void ghep(LList L1 , LList L2 , LList *L){
+	taoList(L);
+	Node *p1 = L1.pHead;
+	Node *p2 = L2.pHead;
+	
+	if(L1.spt < L2.spt){
+		while(p1 != NULL){
+			themDau(L , p1->infor);
+			themDau(L,p2->infor);
+			p1 = p1->link;
+			p2 = p2->link;
+		}
+		while(p2 != NULL){
+			themDau(L, p2->infor);
+			p2 = p2->link;
+		}
+	}else {
+		while ( p2 != NULL){
+			themDau(L , p2->infor);
+			themDau(L, p1->infor);
+			p2 = p2->link;
+			p1 = p1->link;
+		}
+		while ( p1 != NULL){
+			themDau(L , p1->infor);
+			p1 = p1->link;
+		}
+	}
+}
+//7
+void xoaDau(LList *L){
+	Node *pp;
+	if(emptyList(*L)) return;
+	else {
+		pp = L->pHead;
+		L->pHead = pp->link;
+		free(pp);
+		L->spt--;
+		if(L->pHead == NULL) L->pTail = NULL;
+	}
+}
+//8
+void xoaCuoi (LList *L , Node *q){
+	Node *pp;
+	if(q == NULL) return;
+	else {
+		pp = q->link;
+		if(q->link == L->pTail)
+			L->pTail = q;
+		q->link = pp->link;
+		free(pp);
+		L->spt--;
+	}
+}
+void nhap(Data *x){
+	printf("Nhap ma SV: ");
+	scanf("%d", &(x->masv));
+	if( x->masv > 0 ){
+		printf("Nhap ho ten: ");
+		scanf("%s", x->HoTen);
+		printf("Nhap diem mon 1: ");
+		scanf("%f", &(x->d1));
+		printf("Nhap diem mon 2: ");
+		scanf("%f", &(x->d2));
+		printf("Nhap diem mon 3: ");
+		scanf("%f", &(x->d3));
+	}
+}
+
+void in(Data x){
+	printf("Ten : %s\nMa SV: %d\nDiem 1: %.2f\nDiem 2: %.2f\nDiem 3: %.2f", x.HoTen, x.masv, x.d1,x.d2,x.d3);
+}
+void xulyList(LList L){
+	Node *pp = L.pHead;
+	while (pp != NULL){
+		in(pp->infor);
+		pp = pp->link;
+	}
+}
+
+int main(){
+	LList L;
+	int kt = 0;
+	Data x;
+	taoList(&L);
+	do{
+		printf("\nChuong trinh lam viec voi DSLK don SV\n");
+		printf("\n1:Them nut vao dau danh sach");
+		printf("\n2:Them nut vao cuoi danh sach");
+		printf("\n3:Them nut vao sau mot nut khac trong danh sach");
+		printf("\n4:Chen tang nut vao danh sach");
+		printf("\n5:Tach thanh 2 ds tu 1 ds");
+		printf("\n6:Ghep 2 ds thanh 1 ds");
+		printf("\n7:Xoa nut dau");
+		printf("\n8:Xoa nut cuoi");
+		printf("\n9:Duyet danh sach");
+		printf("\n0:Thoat");
+		printf("\nMoi ban chon: ");
+		int chon;
+		scanf("%d", &chon);
+		switch (chon){
+			case 1:
+				system("cls");
+				printf("Nhap thong tin sinh vien can them\n");
+				nhap(&x);
+				if (x.masv > 0)
+					themDau(&L , x);
+				break;
+			case 2:
+				system("cls");
+				printf("Nhap thong tin sinh vien can them\n");
+				nhap(&x);
+				if(x.masv > 0){
+					themCuoi(&L,x);
+				}
+				break;
+			case 3:
+				system("cls");
+				if(emptyList(L)){
+					printf("Danh sach rong thi chen cai cc");
+					break;
+				}
+				int vt;
+				printf("Nhap vi tri muon chen: ");
+				scanf("%d", &vt);
+				Node *q = ViTri(L, vt);
+				if( q== NULL){
+					printf("Vi tri sai me roi");
+				}else {
+					printf("Nhap thong tin SV: ");
+					nhap(&x);
+					if(x.masv > 0){
+						themSau(&L , q , x);
+					}
+				}
+				break;
+			case 4:
+				system("cls");
+				printf("Nhap thong tin SV:");
+				nhap(&x);
+				if(x.masv > 0){
+					chen_tang(&L , x);
+				}
+				break;
+			
+				
+			case 9:
+				system("cls");
+				xulyList(L);
+				break;
+			case 0:
+				system("cls");
+				printf("Get the fvck out off here");
+				kt = 1;
+				break;	
+		}
+	} while (kt == 0);
+}
