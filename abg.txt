@@ -1,0 +1,106 @@
+#include<stdio.h>
+#include<stdlib.h>
+
+typedef struct {
+	char HoTen[30];
+	int masv;
+	float d1 , d2 ,d3;
+}Data;
+
+typedef struct tagNode {
+	Data infor;
+	struct tagNode *link;
+}Node;
+
+typedef struct {
+	Node *pHead;
+	Node *pTail;
+	int spt;
+}LList;
+void taoList(LList *L){
+	L->pHead = NULL;
+	L->pTail = NULL;
+	L->spt = 0;
+}
+
+int emptyList(LList L){
+	return (L.spt == 0);
+}
+
+void themDau (LList *L , Data x){
+	Node *pp;
+	pp = (Node*)malloc(sizeof(Node));
+	pp->infor = x;
+	pp->link = NULL;
+	
+	if  ( emptyList(*L)){
+		L->pHead = pp;
+		L->pTail == pp;
+	}
+	else {
+		pp->link = L->pHead;
+		L->pHead = pp;
+	}
+	L->spt++;
+}
+void nhap(Data *x){
+	printf("Nhap ma SV: ");
+	scanf("%d", &(x->masv));
+	if( x->masv > 0 ){
+		printf("Nhap ho ten: ");
+		scanf("%s", x->HoTen);
+		printf("Nhap diem mon 1: ");
+		scanf("%f", &(x->d1));
+		printf("Nhap diem mon 2: ");
+		scanf("%f", &(x->d2));
+		printf("Nhap diem mon 3: ");
+		scanf("%f", &(x->d3));
+	}
+}
+
+void in(Data x){
+	printf("Ten : %s\nMa SV: %d\nDiem 1: %.2f\nDiem 2: %.2f\nDiem 3: %.2f", x.HoTen, x.masv, x.d1,x.d2,x.d3);
+}
+void xulyList(LList L){
+	Node *pp = L.pHead;
+	while (pp != NULL){
+		in(pp->infor);
+		pp = pp->link;
+	}
+}
+
+int main(){
+	LList L;
+	int kt = 0;
+	Data x;
+	taoList(&L);
+	do{
+		printf("\nChuong trinh lam viec voi DSLK don SV\n");
+		printf("\n1:Them nut vao dau danh sach");
+		printf("\n2:Them nut vao cuoi danh sach");
+		printf("\n3:Them nut vao sau mot nut khac trong danh sach");
+		printf("\n9:Duyet danh sach");
+		printf("\n0:Thoat");
+		printf("\nMoi ban chon: ");
+		int chon;
+		scanf("%d", &chon);
+		switch (chon){
+			case 1:
+				system("cls");
+				printf("Nhap  thong tin sinh vien can them\n");
+				nhap(&x);
+				if (x.masv > 0)
+					themDau(&L , x);
+				break;
+			case 9:
+				system("cls");
+				xulyList(L);
+				break;
+			case 0:
+				system("cls");
+				printf("Get the fvck out off here");
+				kt = 1;
+				break;	
+		}
+	} while (kt == 0);
+}
